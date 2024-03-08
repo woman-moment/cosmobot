@@ -41,7 +41,7 @@ def another_commands(message):
         bot.forward_messages(message.chat.id, idd, arr[0])
         bot.forward_messages(message.chat.id, idd, arr[4])
         bot.forward_messages(message.chat.id, idd, arr[8])
-        bot.forward_messages(message.chat.id, idd, arr[13])
+        bot.forward_messages(message.chat.id, idd, arr[12])
 
 
     elif message.text == "Что умеет этот бот?":
@@ -85,3 +85,8 @@ def finish(message):
 
 
 bot.polling(none_stop=True)
+
+#Исправить: добавить проверку, что если фамилия none то не надо её включать
+# чтобы не показывалось, откуда переслано
+# сделать асинхронным на разных устройствах
+#исправить объект на 12 (ГОТОВО)
