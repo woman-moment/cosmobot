@@ -2,13 +2,15 @@ import telebot
 from telebot import types# для указание типов
 import config
 
-num = 0
+dict = {}
 arr = [[2, 3, 4], [5, 6], [7, 8], [9], [10, 11], [12], [13], [14, 15], [16], [17], [18], [19], [20, 21]]
 idd = -1002140770203
 bot = telebot.TeleBot('7165523324:AAEIvwFPprEFi5shFyyYhDCStuvRZczgU1s')
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    if message.from_user.id not in dict:
+        dict[message.from_user.id] = 0
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Что умеет этот бот?")
     btn2 = types.KeyboardButton("Cмотреть объекты!")
@@ -20,7 +22,7 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def another_commands(message):
-    global num
+    num = dict[message.from_user.id]
     if message.text == 'Супер! Я готов!' or message.text == 'Я нашёл! Дальше)': #проходим квест
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton("Я нашёл! Дальше)")
@@ -32,7 +34,7 @@ def another_commands(message):
             bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
             #bot.forward_message(message.chat.id, idd, num)
             bot.forward_messages(message.chat.id, idd, arr[num])
-            num = num + 1
+            dict[message.from_user.id] += 1
 
 
     elif message.text == "Посмотреть основные объекты!" : #смотрим основные штуки
@@ -71,8 +73,7 @@ def kvest(message):
     bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
 
 def finish(message):
-    global num
-    num = 0
+    dict[message.from_user.id] = 0
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Что умеет этот бот?")
     btn2 = types.KeyboardButton("Посмотреть основные объекты!")
