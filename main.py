@@ -1,7 +1,9 @@
 import telebot
+import sqlite3
 from telebot import types# для указание типов
 import config
 
+dict = {}
 num = 0
 arr = [[2, 3, 4], [5, 6], [7, 8], [9], [10, 11], [12], [13], [14, 15], [16], [17], [18], [19], [20, 21]]
 idd = -1002140770203
@@ -9,6 +11,14 @@ bot = telebot.TeleBot('7165523324:AAEIvwFPprEFi5shFyyYhDCStuvRZczgU1s')
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    conn = sqlite3.connect('num_for_users')
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE IF NOT EXISTS users (id int auto_increment primary key, num int')
+    conn.commit()
+    cur.close()
+    conn.close()
+    register(message)
+
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Что умеет этот бот?")
     btn2 = types.KeyboardButton("Cмотреть объекты!")
@@ -82,6 +92,15 @@ def finish(message):
            f'ты молодец, прекрасно справился найти все объекты!' \
            f'Надеюсь, наш квест тебе понравился:)'
     bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
+
+def register(message): #добавить пользователя в бд
+    conn = sqlite3.connect('num_for_users')
+    cur = conn.cursor()
+    num = 0
+    cur.execute(f'INSERT INTO users (num) VALUES("{num}")')
+    conn.commit()
+    cur.close()
+    conn.close()
 
 
 bot.polling(none_stop=True)
