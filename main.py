@@ -16,12 +16,17 @@ def start(message):
     btn2 = types.KeyboardButton("Cмотреть объекты!")
     btn3 = types.KeyboardButton("Пройти квест!")
     markup.add(btn1, btn2, btn3)
-    mess = f'Приветик:), <b>{message.from_user.first_name} {message.from_user.last_name}</b>'
+    if message.from_user.last_name != None:
+        mess = f'Приветик:), <b>{message.from_user.first_name} {message.from_user.last_name}</b>'
+    else:
+        mess = f'Приветик:), <b>{message.from_user.first_name}</b>'
     bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
 
 
 @bot.message_handler(content_types=['text'])
 def another_commands(message):
+    if message.from_user.id not in dict:
+        dict[message.from_user.id] = 0
     num = dict[message.from_user.id]
     if message.text == 'Супер! Я готов!' or message.text == 'Я нашёл! Дальше)': #проходим квест
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -30,20 +35,20 @@ def another_commands(message):
         if num == 13:
             finish(message)
         else:
-            mess = f'Отлично, лови следующий объект)'
+            mess = f'Отлично, лови следующий объект:'
             bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
             #bot.forward_message(message.chat.id, idd, num)
-            bot.forward_messages(message.chat.id, idd, arr[num])
+            bot.copy_messages(message.chat.id, idd, arr[num])
             dict[message.from_user.id] += 1
 
 
     elif message.text == "Посмотреть основные объекты!" : #смотрим основные штуки
         mess = f'Отлично, лови:'
         bot.send_message(message.chat.id, mess, parse_mode='html')
-        bot.forward_messages(message.chat.id, idd, arr[0])
-        bot.forward_messages(message.chat.id, idd, arr[4])
-        bot.forward_messages(message.chat.id, idd, arr[8])
-        bot.forward_messages(message.chat.id, idd, arr[12])
+        bot.copy_messages(message.chat.id, idd, arr[0])
+        bot.copy_messages(message.chat.id, idd, arr[4])
+        bot.copy_messages(message.chat.id, idd, arr[8])
+        bot.copy_messages(message.chat.id, idd, arr[12])
 
 
     elif message.text == "Что умеет этот бот?":
@@ -65,29 +70,38 @@ def another_commands(message):
 
 
 def kvest(message):
+    if message.from_user.id not in dict:
+        dict[message.from_user.id] = 0
+    dict[message.from_user.id] = 0
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Супер! Я готов!")
     btn2 = types.KeyboardButton("В другой раз")
     markup.add(btn1, btn2)
-    mess = f'<b>{message.from_user.first_name} {message.from_user.last_name}</b>, готов полулять по Самаре и посмотреть её космические объекты?'
+    if message.from_user.last_name != None:
+        mess = f'<b>{message.from_user.first_name} {message.from_user.last_name}</b>, готов полулять по Самаре и посмотреть её космические объекты?'
+    else:
+        mess = f'<b>{message.from_user.first_name}</b>, готов полулять по Самаре и посмотреть её космические объекты?'
     bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
 
 def finish(message):
+    if message.from_user.id not in dict:
+        dict[message.from_user.id] = 0
     dict[message.from_user.id] = 0
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Что умеет этот бот?")
     btn2 = types.KeyboardButton("Посмотреть основные объекты!")
     btn3 = types.KeyboardButton("Пройти квест!")
     markup.add(btn1, btn2, btn3)
-    mess = f'Отлично, <b>{message.from_user.first_name} {message.from_user.last_name}</b>, ' \
+    if message.from_user.last_name != None:
+        mess = f'Отлично, <b>{message.from_user.first_name} {message.from_user.last_name}</b>, ' \
            f'ты молодец, прекрасно справился найти все объекты!' \
            f'Надеюсь, наш квест тебе понравился:)'
+    else:
+        mess = f'Отлично, <b>{message.from_user.first_name} </b>, ' \
+               f'ты молодец, прекрасно справился и смог найти все объекты!' \
+               f'Надеюсь, наш квест тебе понравился:)'
     bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
 
 
 bot.polling(none_stop=True)
 
-#Исправить: добавить проверку, что если фамилия none то не надо её включать
-# чтобы не показывалось, откуда переслано
-# сделать асинхронным на разных устройствах
-#исправить объект на 12 (ГОТОВО)
