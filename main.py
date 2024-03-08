@@ -2,6 +2,8 @@ import telebot
 from telebot import types# для указание типов
 import config
 
+num = 0
+arr = [[2, 3, 4], [5, 6], [7, 8], [9], [10, 11], [12], [13], [14, 15], [16], [17], [18], [19], [20, 21]]
 idd = -1002140770203
 bot = telebot.TeleBot('7165523324:AAEIvwFPprEFi5shFyyYhDCStuvRZczgU1s')
 
@@ -9,7 +11,7 @@ bot = telebot.TeleBot('7165523324:AAEIvwFPprEFi5shFyyYhDCStuvRZczgU1s')
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Что умеет этот бот?")
-    btn2 = types.KeyboardButton("Посмотреть основные объекты!")
+    btn2 = types.KeyboardButton("Cмотреть объекты!")
     btn3 = types.KeyboardButton("Пройти квест!")
     markup.add(btn1, btn2, btn3)
     mess = f'Приветик:), <b>{message.from_user.first_name} {message.from_user.last_name}</b>'
@@ -18,30 +20,46 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def another_commands(message):
-    if(message.text == 'Супер! Я готов!'):
+    global num
+    if message.text == 'Супер! Я готов!' or message.text == 'Я нашёл! Дальше)': #проходим квест
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton("Я нашёл! Дальше)")
         markup.add(btn1)
-        bot.forward_message(message.chat.id, idd, 5)
-        mess = f'Ура, ты дошла до сюда, <b>{message.from_user.first_name} {message.from_user.last_name}</b>'
-        bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
-    if(message.text == "Посмотреть основные объекты!"):
+        if num == 13:
+            finish(message)
+        else:
+            mess = f'Отлично, лови следующий объект)'
+            bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
+            #bot.forward_message(message.chat.id, idd, num)
+            bot.forward_messages(message.chat.id, idd, arr[num])
+            num = num + 1
+
+
+    elif message.text == "Посмотреть основные объекты!" : #смотрим основные штуки
+        mess = f'Отлично, лови:'
+        bot.send_message(message.chat.id, mess, parse_mode='html')
+        bot.forward_messages(message.chat.id, idd, arr[0])
+        bot.forward_messages(message.chat.id, idd, arr[4])
+        bot.forward_messages(message.chat.id, idd, arr[8])
+        bot.forward_messages(message.chat.id, idd, arr[13])
+
+
+    elif message.text == "Что умеет этот бот?":
         bot.forward_message(message.chat.id, message.chat.id, message.message_id)
-    elif(message.text == "Что умеет этот бот?"):
-        bot.forward_message(message.chat.id, message.chat.id, message.message_id)
-    elif (message.text == "Я устал:("):#если пользователь устал ходить по квесту, то заканчиваем
+
+
+    elif message.text == "Пройти квест!":
+        kvest(message)
+
+
+    else: #сюда приходим в каждой непонятной ситуации
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton("Что умеет этот бот?")
         btn2 = types.KeyboardButton("Посмотреть основные объекты!")
         btn3 = types.KeyboardButton("Пройти квест!")
         markup.add(btn1, btn2, btn3)
-        mess = f'Ничего страшного, <b>{message.from_user.first_name} {message.from_user.last_name}</b>, в следующий раз продолжишь!'
+        mess = f'Выбирай, что хочешь делать:'
         bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
-    elif (message.text == "Пройти квест!"):
-        kvest(message)
-    else:
-        mess = f'Приветик:), <b>{message.from_user.first_name} {message.from_user.last_name}</b>'
-        bot.send_message(message.chat.id, mess, parse_mode='html')
 
 
 def kvest(message):
@@ -49,7 +67,20 @@ def kvest(message):
     btn1 = types.KeyboardButton("Супер! Я готов!")
     btn2 = types.KeyboardButton("В другой раз")
     markup.add(btn1, btn2)
-    mess = f'Ничего страшного, <b>{message.from_user.first_name} {message.from_user.last_name}</b>, в следующий раз продолжишь!'
+    mess = f'<b>{message.from_user.first_name} {message.from_user.last_name}</b>, готов полулять по Самаре и посмотреть её космические объекты?'
+    bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
+
+def finish(message):
+    global num
+    num = 0
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    btn1 = types.KeyboardButton("Что умеет этот бот?")
+    btn2 = types.KeyboardButton("Посмотреть основные объекты!")
+    btn3 = types.KeyboardButton("Пройти квест!")
+    markup.add(btn1, btn2, btn3)
+    mess = f'Отлично, <b>{message.from_user.first_name} {message.from_user.last_name}</b>, ' \
+           f'ты молодец, прекрасно справился найти все объекты!' \
+           f'Надеюсь, наш квест тебе понравился:)'
     bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
 
 
