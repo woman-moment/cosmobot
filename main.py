@@ -13,7 +13,7 @@ def start(message):
         dict[message.from_user.id] = 0
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Что умеет этот бот?")
-    btn2 = types.KeyboardButton("Cмотреть объекты!")
+    btn2 = types.KeyboardButton("Посмотреть объекты!")
     btn3 = types.KeyboardButton("Пройти квест!")
     markup.add(btn1, btn2, btn3)
     if message.from_user.last_name != None:
@@ -28,9 +28,9 @@ def another_commands(message):
     if message.from_user.id not in dict:
         dict[message.from_user.id] = 0
     num = dict[message.from_user.id]
-    if message.text == 'Супер! Я готов!' or message.text == 'Я нашёл! Дальше)': #проходим квест
+    if message.text == 'Супер! Я готов!' or message.text == 'Я нашёл, дальше!': #проходим квест
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        btn1 = types.KeyboardButton("Я нашёл! Дальше)")
+        btn1 = types.KeyboardButton("Я нашёл, дальше!")
         markup.add(btn1)
         if num == 13:
             finish(message)
@@ -42,7 +42,7 @@ def another_commands(message):
             dict[message.from_user.id] += 1
 
 
-    elif message.text == "Посмотреть основные объекты!" : #смотрим основные штуки
+    elif message.text == "Посмотреть объекты!" : #смотрим основные штуки
         mess = f'Отлично, лови:'
         bot.send_message(message.chat.id, mess, parse_mode='html')
         bot.copy_messages(message.chat.id, idd, arr[0])
@@ -52,7 +52,7 @@ def another_commands(message):
 
 
     elif message.text == "Что умеет этот бот?":
-        bot.forward_message(message.chat.id, message.chat.id, message.message_id)
+        bot.copy_message(message.chat.id, idd, 23)
 
 
     elif message.text == "Пройти квест!":
@@ -62,7 +62,7 @@ def another_commands(message):
     else: #сюда приходим в каждой непонятной ситуации
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton("Что умеет этот бот?")
-        btn2 = types.KeyboardButton("Посмотреть основные объекты!")
+        btn2 = types.KeyboardButton("Посмотреть объекты!")
         btn3 = types.KeyboardButton("Пройти квест!")
         markup.add(btn1, btn2, btn3)
         mess = f'Выбирай, что хочешь делать:'
@@ -78,9 +78,17 @@ def kvest(message):
     btn2 = types.KeyboardButton("В другой раз")
     markup.add(btn1, btn2)
     if message.from_user.last_name != None:
-        mess = f'<b>{message.from_user.first_name} {message.from_user.last_name}</b>, готов полулять по Самаре и посмотреть её космические объекты?'
+        mess = f'<b>{message.from_user.first_name} {message.from_user.last_name}, готов полулять по Самаре и посмотреть её космические объекты? </b>' \
+               f'Я буду присылать тебе по одному объекту Самары космической, а ты должен будешь искать их в городе. Под спойлером в сообщении будет скрываться ' \
+               f'адрес этого объекта, поэтому, если ты не так хорошо знаешь город, то, считай, этот адрес - моя подсказка тебе. Как только находишь объект, сообщай мне об этом - ' \
+               f'нажимай кнопку "Я нашёл, дальше!" и лови новый объект. Объекты расположены таким образом, чтобы тебе было удобно передвигаться от каждого из них до следующего, и чтобы в ' \
+               f'результате прохождения квеста ты обошёл весь город. <b>Готов?) Желаю тебе удачи!</b>'
     else:
-        mess = f'<b>{message.from_user.first_name}</b>, готов полулять по Самаре и посмотреть её космические объекты?'
+        mess = f'<b>{message.from_user.first_name}</b>, готов полулять по Самаре и посмотреть её космические объекты? </b>' \
+               f'Я буду присылать тебе по одному объекту Самары космической, а ты должен будешь искать их в городе. Под спойлером в сообщении будет скрываться ' \
+               f'адрес этого объекта, поэтому, если ты не так хорошо знаешь город, то, считай, этот адрес - моя подсказка тебе. Как только находишь объект, сообщай мне об этом - ' \
+               f'нажимай кнопку "Я нашёл, дальше!" и лови новый объект. Объекты расположены таким образом, чтобы тебе было удобно передвигаться от каждого из них до следующего, и чтобы в ' \
+               f'результате прохождения квеста ты обошёл весь город. <b>Готов?) Желаю тебе удачи!</b>'
     bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
 
 def finish(message):
@@ -89,17 +97,17 @@ def finish(message):
     dict[message.from_user.id] = 0
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Что умеет этот бот?")
-    btn2 = types.KeyboardButton("Посмотреть основные объекты!")
+    btn2 = types.KeyboardButton("Посмотреть объекты!")
     btn3 = types.KeyboardButton("Пройти квест!")
     markup.add(btn1, btn2, btn3)
     if message.from_user.last_name != None:
         mess = f'Отлично, <b>{message.from_user.first_name} {message.from_user.last_name}</b>, ' \
-           f'ты молодец, прекрасно справился найти все объекты!' \
-           f'Надеюсь, наш квест тебе понравился:)'
+           f'ты молодец, прекрасно справился и смог найти все объекты!' \
+           f'Надеюсь, квест тебе понравился:)'
     else:
         mess = f'Отлично, <b>{message.from_user.first_name} </b>, ' \
                f'ты молодец, прекрасно справился и смог найти все объекты!' \
-               f'Надеюсь, наш квест тебе понравился:)'
+               f'Надеюсь, квест тебе понравился:)'
     bot.send_message(message.chat.id, mess, parse_mode='html', reply_markup=markup)
 
 
